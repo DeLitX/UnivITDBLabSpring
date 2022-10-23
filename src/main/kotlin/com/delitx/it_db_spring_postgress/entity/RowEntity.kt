@@ -21,3 +21,5 @@ class RowEntity(
 
     fun toModel(): Row = Row.create(id, values.map { it.toModel() })
 }
+
+fun Row.toEntity(): RowEntity = RowEntity(id, values.map { it.toEntity() })

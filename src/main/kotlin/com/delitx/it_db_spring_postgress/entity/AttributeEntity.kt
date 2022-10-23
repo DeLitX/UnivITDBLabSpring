@@ -16,3 +16,5 @@ class AttributeEntity(
 
     fun toModel(): Attribute = Attribute.create(id, name, typeName)
 }
+
+fun Attribute.toEntity(): AttributeEntity = AttributeEntity(id, name, type.name)

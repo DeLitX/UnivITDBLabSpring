@@ -29,3 +29,5 @@ class TableEntity(
 
     fun toModel(): Table = Table.create(id, name, attributes.map { it.toModel() }, rows.map { it.toModel() })
 }
+
+fun Table.toEntity(): TableEntity = TableEntity(id, name, attributes.map { it.toEntity() }, rows.map { it.toEntity() })

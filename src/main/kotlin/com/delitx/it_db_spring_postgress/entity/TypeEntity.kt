@@ -35,3 +35,5 @@ class TypeEntity(
         error("No according type")
     }
 }
+
+fun Type.toEntity(): TypeEntity = TypeEntity(id, name, toString())

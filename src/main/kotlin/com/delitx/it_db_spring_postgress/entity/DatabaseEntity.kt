@@ -21,3 +21,5 @@ class DatabaseEntity(
 
     fun toModel(): Database = Database.create(id, tables.map { it.toModel() })
 }
+
+fun Database.toEntity(): DatabaseEntity = DatabaseEntity(id, tables.map { it.toEntity() })
