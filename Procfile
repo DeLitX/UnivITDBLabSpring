@@ -1,0 +1,1 @@
+web: java -Dserver.port=$PORT -jar build/libs/it_db_spring_postgress-0.0.1-SNAPSHOT.jar
