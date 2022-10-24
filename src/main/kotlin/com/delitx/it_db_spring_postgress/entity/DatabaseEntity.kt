@@ -15,11 +15,14 @@ class DatabaseEntity(
         cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY
     )
-    val tables: List<TableEntity>
+    val tables: MutableList<TableEntity>,
 ) {
-    constructor() : this(0, emptyList())
+    constructor() : this(0, mutableListOf())
 
     fun toModel(): Database = Database.create(id, tables.map { it.toModel() })
 }
 
-fun Database.toEntity(): DatabaseEntity = DatabaseEntity(id, tables.map { it.toEntity() })
+fun Database.toEntity(): DatabaseEntity = DatabaseEntity(
+    id,
+    tables.map { it.toEntity() }.toMutableList()
+)

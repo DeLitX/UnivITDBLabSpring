@@ -30,7 +30,7 @@ interface Attribute {
         fun create(id: Int, name: String, typeName: String): Attribute {
             val classes = Type.getSubclasses()
             for (type in classes) {
-                if (typeName == name) {
+                if (typeName == type.name) {
                     return create(
                         id,
                         name,

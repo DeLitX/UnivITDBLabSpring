@@ -16,18 +16,23 @@ class TableEntity(
         cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY
     )
-    val attributes: List<AttributeEntity>,
+    val attributes: MutableList<AttributeEntity>,
 
     @OneToMany(
         targetEntity = RowEntity::class,
         cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY
     )
-    val rows: List<RowEntity>
+    val rows: MutableList<RowEntity>,
 ) {
-    constructor() : this(0, "", emptyList(), emptyList())
+    constructor() : this(0, "", mutableListOf(), mutableListOf())
 
     fun toModel(): Table = Table.create(id, name, attributes.map { it.toModel() }, rows.map { it.toModel() })
 }
 
-fun Table.toEntity(): TableEntity = TableEntity(id, name, attributes.map { it.toEntity() }, rows.map { it.toEntity() })
+fun Table.toEntity(): TableEntity = TableEntity(
+    id,
+    name,
+    attributes.map { it.toEntity() }.toMutableList(),
+    rows.map { it.toEntity() }.toMutableList(),
+)

@@ -15,11 +15,14 @@ class RowEntity(
         cascade = [CascadeType.ALL],
         fetch = FetchType.LAZY
     )
-    var values: List<TypeEntity>
+    var values: MutableList<TypeEntity>,
 ) {
-    constructor() : this(0, emptyList())
+    constructor() : this(0, mutableListOf())
 
     fun toModel(): Row = Row.create(id, values.map { it.toModel() })
 }
 
-fun Row.toEntity(): RowEntity = RowEntity(id, values.map { it.toEntity() })
+fun Row.toEntity(): RowEntity = RowEntity(
+    id,
+    values.map { it.toEntity() }.toMutableList(),
+)

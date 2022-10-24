@@ -1,8 +1,9 @@
 package com.delitx.it_db_spring_postgress.controllers
 
+import com.delitx.it_db_spring_postgress.DateParseException
 import com.delitx.it_db_spring_postgress.db.row.Row
 import com.delitx.it_db_spring_postgress.db.table.Table
-import com.delitx.it_db_spring_postgress.db.type.Type
+import com.delitx.it_db_spring_postgress.db.type.*
 import com.delitx.it_db_spring_postgress.network_dto.TableDto
 import com.delitx.it_db_spring_postgress.network_dto.TypeDto
 import com.delitx.it_db_spring_postgress.network_dto.toDto
@@ -29,13 +30,21 @@ class TableController {
         val table = service.getById(addTable.tableId)
             ?: return ResponseEntity.badRequest().body("Table not available")
         return try {
-            val row = addTable.rowModel()
+            val rowValues = addTable.values
+            val row = Row.create(
+                0,
+                table.attributes.zip(rowValues) { attribute, value ->
+                    TypeDto(0, attribute.type.name, value).toModel()
+                }
+            )
             val newTable = Table.create(table.id, table.name, table.attributes, table.rows + row)
             service.update(newTable)
             ResponseEntity.ok("Saved")
         } catch (e: IllegalStateException) {
             ResponseEntity.badRequest().body("Data invalid")
         } catch (e: IllegalArgumentException) {
+            ResponseEntity.badRequest().body("Data invalid")
+        } catch (e: DateParseException) {
             ResponseEntity.badRequest().body("Data invalid")
         }
     }
@@ -49,18 +58,7 @@ class TableController {
     class AddRowDto(
         @field:JsonProperty("tableId")
         val tableId: Int,
-        @field:JsonProperty("row")
-        val values: List<AddRowType>,
-    ) {
-        class AddRowType(
-            @field:JsonProperty("tableId")
-            val name: String,
-            @field:JsonProperty("tableId")
-            val value: String,
-        ) {
-            fun toModel(): Type = TypeDto(0, name, value).toModel()
-        }
-
-        fun rowModel(): Row = Row.create(0, values.map { it.toModel() })
-    }
+        @field:JsonProperty("values")
+        val values: List<String>,
+    )
 }
