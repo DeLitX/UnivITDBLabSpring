@@ -16,6 +16,12 @@ class DatabaseService {
 
     fun getById(id: Int): Database? = repository.findByIdOrNull(id)?.toModel()
 
+    fun create(): Int {
+        val dbEntity = Database.create(0, emptyList()).toEntity()
+        val saved = repository.save(dbEntity)
+        return saved.id
+    }
+
     fun update(database: Database) {
         repository.save(database.toEntity())
     }
