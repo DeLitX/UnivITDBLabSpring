@@ -29,3 +29,9 @@ class TypeDto(
         error("No according type")
     }
 }
+
+fun Type.toDto(): TypeDto = TypeDto(
+    id,
+    name,
+    toString(),
+)

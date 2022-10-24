@@ -14,3 +14,8 @@ class DatabaseDto(
         tables.map { it.toModel() },
     )
 }
+
+fun Database.toDto(): DatabaseDto = DatabaseDto(
+    id,
+    tables.map { it.toDto() },
+)

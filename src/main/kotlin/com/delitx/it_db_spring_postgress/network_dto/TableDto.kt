@@ -2,7 +2,6 @@ package com.delitx.it_db_spring_postgress.network_dto
 
 import com.delitx.it_db_spring_postgress.db.table.Table
 import com.fasterxml.jackson.annotation.JsonProperty
-import javax.persistence.*
 
 class TableDto(
     @field:JsonProperty("id")
@@ -21,3 +20,10 @@ class TableDto(
         rows.map { it.toModel() },
     )
 }
+
+fun Table.toDto(): TableDto = TableDto(
+    id,
+    name,
+    attributes.map { it.toDto() },
+    rows.map { it.toDto() },
+)

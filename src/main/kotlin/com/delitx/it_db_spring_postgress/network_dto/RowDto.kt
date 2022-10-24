@@ -14,3 +14,8 @@ class RowDto(
         values.map { it.toModel() },
     )
 }
+
+fun Row.toDto(): RowDto = RowDto(
+    id,
+    values.map { it.toDto() },
+)

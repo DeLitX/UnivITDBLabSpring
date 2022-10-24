@@ -13,3 +13,9 @@ class AttributeDto(
 ) {
     fun toModel(): Attribute = Attribute.create(id, name, typeName)
 }
+
+fun Attribute.toDto(): AttributeDto = AttributeDto(
+    id,
+    name,
+    type.name,
+)
