@@ -1,8 +1,10 @@
 package com.delitx.it_db_spring_postgress.controllers
 
+import com.delitx.it_db_spring_postgress.db.row.Row
 import com.delitx.it_db_spring_postgress.db.table.Table
-import com.delitx.it_db_spring_postgress.network_dto.RowDto
+import com.delitx.it_db_spring_postgress.db.type.Type
 import com.delitx.it_db_spring_postgress.network_dto.TableDto
+import com.delitx.it_db_spring_postgress.network_dto.TypeDto
 import com.delitx.it_db_spring_postgress.network_dto.toDto
 import com.delitx.it_db_spring_postgress.services.TableService
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -27,7 +29,7 @@ class TableController {
         val table = service.getById(addTable.tableId)
             ?: return ResponseEntity.badRequest().body("Table not available")
         return try {
-            val row = addTable.row.toModel()
+            val row = addTable.rowModel()
             val newTable = Table.create(table.id, table.name, table.attributes, table.rows + row)
             service.update(newTable)
             ResponseEntity.ok("Saved")
@@ -48,6 +50,17 @@ class TableController {
         @field:JsonProperty("tableId")
         val tableId: Int,
         @field:JsonProperty("row")
-        val row: RowDto,
-    )
+        val values: List<AddRowType>,
+    ) {
+        class AddRowType(
+            @field:JsonProperty("tableId")
+            val name: String,
+            @field:JsonProperty("tableId")
+            val value: String,
+        ) {
+            fun toModel(): Type = TypeDto(0, name, value).toModel()
+        }
+
+        fun rowModel(): Row = Row.create(0, values.map { it.toModel() })
+    }
 }
