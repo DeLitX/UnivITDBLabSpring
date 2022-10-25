@@ -9,7 +9,7 @@ import javax.persistence.Id
 
 @Entity
 @javax.persistence.Table(name = "types")
-class TypeEntity(
+data class TypeEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Int,

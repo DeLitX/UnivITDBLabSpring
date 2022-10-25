@@ -4,7 +4,7 @@ import com.delitx.it_db_spring_postgress.Date
 import com.delitx.it_db_spring_postgress.db.type.*
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class TypeDto(
+data class TypeDto(
     @field:JsonProperty("id")
     val id: Int,
     @field:JsonProperty("name")

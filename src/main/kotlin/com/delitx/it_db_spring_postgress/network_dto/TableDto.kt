@@ -3,7 +3,7 @@ package com.delitx.it_db_spring_postgress.network_dto
 import com.delitx.it_db_spring_postgress.db.table.Table
 import com.fasterxml.jackson.annotation.JsonProperty
 
-class TableDto(
+data class TableDto(
     @field:JsonProperty("id")
     val id: Int,
     @field:JsonProperty("name")
