@@ -3,7 +3,7 @@ package com.delitx.it_db_spring_postgress.db.table
 import com.delitx.it_db_spring_postgress.db.row.Row
 
 interface Table {
-    val id: Int
+    val id: String
     val name: String
     val attributes: List<Attribute>
     val rows: List<Row>
@@ -15,7 +15,7 @@ interface Table {
     fun updateRow(index: Int, update: (Row) -> Row): Table
 
     companion object {
-        fun create(id: Int, name: String, attributes: List<Attribute>, rows: List<Row>): Table =
+        fun create(id: String, name: String, attributes: List<Attribute>, rows: List<Row>): Table =
             TableImpl(id, name, attributes, rows)
     }
 }

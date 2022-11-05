@@ -14,13 +14,13 @@ class AttributeService {
 
     fun getAll(): List<Attribute> = repository.findAll().map { it.toModel() }
 
-    fun getById(id: Int): Attribute? = repository.findByIdOrNull(id)?.toModel()
+    fun getById(id: String): Attribute? = repository.findByIdOrNull(id)?.toModel()
 
     fun update(attribute: Attribute) {
         repository.save(attribute.toEntity())
     }
 
-    fun deleteById(id: Int) {
+    fun deleteById(id: String) {
         repository.deleteById(id)
     }
 }

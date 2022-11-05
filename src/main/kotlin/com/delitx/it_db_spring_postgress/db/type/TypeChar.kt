@@ -1,7 +1,7 @@
 package com.delitx.it_db_spring_postgress.db.type
 
 data class TypeChar(
-    override val id: Int,
+    override val id: String,
     val value: Char
 ) : Type {
     override val name: String

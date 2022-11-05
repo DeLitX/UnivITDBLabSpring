@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class TableDto(
     @field:JsonProperty("id")
-    val id: Int,
+    val id: String,
     @field:JsonProperty("name")
     val name: String,
     @field:JsonProperty("attributes")

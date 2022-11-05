@@ -4,12 +4,12 @@ import com.delitx.it_db_spring_postgress.Date
 import com.delitx.it_db_spring_postgress.DateParseException
 
 data class TypeDateInvl(
-    override val id: Int,
+    override val id: String,
     val start: Date,
     val end: Date
 ) : Type {
 
-    constructor(id: Int, value: String) : this(id, Date(value.split(" - ")[0]), Date(value.split(" - ")[1]))
+    constructor(id: String, value: String) : this(id, Date(value.split(" - ")[0]), Date(value.split(" - ")[1]))
 
     override val name: String
         get() = "DateInvl"

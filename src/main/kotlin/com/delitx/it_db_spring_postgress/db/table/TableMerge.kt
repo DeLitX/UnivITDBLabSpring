@@ -11,6 +11,7 @@ fun mergeTablesByField(
     secondIndex: Int,
     newFieldName: String,
     newName: String,
+    idGenerator: () -> String,
 ): Table {
     val firstAttribute = first.attributes[firstIndex]
     val secondAttribute = second.attributes[secondIndex]
@@ -20,7 +21,7 @@ fun mergeTablesByField(
         first.attributes.subList(firstIndex + 1, first.attributes.size) +
         second.attributes.subList(0, secondIndex) +
         second.attributes.subList(secondIndex + 1, second.attributes.size) +
-        Attribute.create(0, newFieldName, firstAttribute.type::class)
+        Attribute.create(idGenerator(), newFieldName, firstAttribute.type::class)
     val newRows = mutableListOf<Row>()
     for (row in first.rows) {
         val fieldValue = row.values[firstIndex]
@@ -31,13 +32,13 @@ fun mergeTablesByField(
                 similarRow.values.subList(0, firstIndex) +
                 similarRow.values.subList(firstIndex + 1, similarRow.values.size) +
                 fieldValue
-            newRows.add(Row.create(0, resultRowValues.map { it.toEntity().copy(id = 0).toModel() }))
+            newRows.add(Row.create(idGenerator(), resultRowValues.map { it.toEntity().copy(id = idGenerator()).toModel() }))
         }
     }
     return Table.create(
-        0,
+        idGenerator(),
         newName,
-        newNames.map { Attribute.create(0, it.name, it.type::class) },
+        newNames.map { Attribute.create(idGenerator(), it.name, it.type::class) },
         newRows,
     )
 }

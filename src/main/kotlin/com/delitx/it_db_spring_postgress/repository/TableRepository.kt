@@ -1,6 +1,8 @@
 package com.delitx.it_db_spring_postgress.repository
 
 import com.delitx.it_db_spring_postgress.entity.TableEntity
-import org.springframework.data.repository.CrudRepository
+import org.springframework.data.mongodb.repository.MongoRepository
+import org.springframework.stereotype.Repository
 
-interface TableRepository : CrudRepository<TableEntity, Int>
+@Repository
+interface TableRepository : MongoRepository<TableEntity, String>

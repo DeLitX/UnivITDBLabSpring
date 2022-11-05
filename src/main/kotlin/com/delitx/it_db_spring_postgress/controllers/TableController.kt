@@ -6,11 +6,10 @@ import com.delitx.it_db_spring_postgress.db.row.Row
 import com.delitx.it_db_spring_postgress.db.table.Table
 import com.delitx.it_db_spring_postgress.db.table.mergeTablesByField
 import com.delitx.it_db_spring_postgress.db.type.*
-import com.delitx.it_db_spring_postgress.network_dto.TableDto
 import com.delitx.it_db_spring_postgress.network_dto.TypeDto
 import com.delitx.it_db_spring_postgress.network_dto.toDto
 import com.delitx.it_db_spring_postgress.services.DatabaseService
-import com.delitx.it_db_spring_postgress.services.TableService
+import com.delitx.it_db_spring_postgress.services.IdGenerationService
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
@@ -21,30 +20,29 @@ import org.springframework.web.bind.annotation.*
 class TableController {
 
     @Autowired
-    private lateinit var service: TableService
-
-    @Autowired
     private lateinit var databaseService: DatabaseService
 
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id: Int): ResponseEntity<TableDto?> {
-        return ResponseEntity.ok(service.getById(id)?.toDto())
-    }
+    @Autowired
+    private lateinit var idGenerator: IdGenerationService
 
     @RequestMapping(value = ["/add_row"], method = [RequestMethod.POST])
     fun addTable(@RequestBody addTable: AddRowDto): ResponseEntity<String> {
-        val table = service.getById(addTable.tableId)
+        val database = databaseService.getById(addTable.databaseId)
+            ?: return ResponseEntity.badRequest().body("Database not available")
+        val table = database.tables.find { it.id == addTable.tableId }
             ?: return ResponseEntity.badRequest().body("Table not available")
         return try {
             val rowValues = addTable.values
             val row = Row.create(
-                0,
+                idGenerator.newId(),
                 table.attributes.zip(rowValues) { attribute, value ->
-                    TypeDto(0, attribute.type.name, value).toModel()
+                    TypeDto(idGenerator.newId(), attribute.type.name, value).toModel()
                 }
             )
             val newTable = Table.create(table.id, table.name, table.attributes, table.rows + row)
-            service.update(newTable)
+            val newTablesList = database.tables.filter { it.id != addTable.tableId } + newTable
+            val newDatabase = Database.create(database.id, newTablesList)
+            databaseService.update(newDatabase)
             ResponseEntity.ok("Saved")
         } catch (e: IllegalStateException) {
             ResponseEntity.badRequest().body("Data invalid")
@@ -79,6 +77,7 @@ class TableController {
                 attribute2Index,
                 mergeTables.resultAttributeName,
                 mergeTables.resultTableName,
+                idGenerator::newId
             )
             val newDatabase = Database.create(database.id, database.tables + newTable)
             databaseService.update(newDatabase)
@@ -100,21 +99,23 @@ class TableController {
             ?: return ResponseEntity.badRequest().body("Table not found")
         val newTable =
             Table.create(table.id, table.name, table.attributes, table.rows.filter { it.id != deleteRowDto.rowId })
-        service.update(newTable)
+        val newTablesList = database.tables.filter { it.id != deleteRowDto.tableId } + newTable
+        val newDatabase = Database.create(database.id, newTablesList)
+        databaseService.update(newDatabase)
         return ResponseEntity.ok("Success")
     }
 
     class MergeTablesDto(
         @field:JsonProperty("databaseId")
-        val databaseId: Int,
+        val databaseId: String,
         @field:JsonProperty("firstTableId")
-        val firstTableId: Int,
+        val firstTableId: String,
         @field:JsonProperty("secondTableId")
-        val secondTableId: Int,
+        val secondTableId: String,
         @field:JsonProperty("firstTableAttributeId")
-        val firstTableAttributeId: Int,
+        val firstTableAttributeId: String,
         @field:JsonProperty("secondTableAttributeId")
-        val secondTableAttributeId: Int,
+        val secondTableAttributeId: String,
         @field:JsonProperty("resultTableName")
         val resultTableName: String,
         @field:JsonProperty("resultAttributeName")
@@ -122,18 +123,20 @@ class TableController {
     )
 
     class AddRowDto(
+        @field:JsonProperty("databaseId")
+        val databaseId: String,
         @field:JsonProperty("tableId")
-        val tableId: Int,
+        val tableId: String,
         @field:JsonProperty("values")
         val values: List<String>,
     )
 
     class DeleteRowDto(
         @field:JsonProperty("databaseId")
-        val databaseId: Int,
+        val databaseId: String,
         @field:JsonProperty("tableId")
-        val tableId: Int,
+        val tableId: String,
         @field:JsonProperty("rowId")
-        val rowId: Int,
+        val rowId: String,
     )
 }

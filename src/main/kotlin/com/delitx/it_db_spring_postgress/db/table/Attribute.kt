@@ -5,29 +5,29 @@ import com.delitx.it_db_spring_postgress.db.type.*
 import kotlin.reflect.KClass
 
 interface Attribute {
-    val id: Int
+    val id: String
     val name: String
     val type: Type
 
     fun isThisType(type: Type): Boolean
 
     companion object {
-        fun <T : Type> create(id: Int, name: String, type: KClass<T>): Attribute =
+        fun <T : Type> create(id: String, name: String, type: KClass<T>): Attribute =
             AttributeImpl(
                 id,
                 name,
                 when (type) {
-                    TypeInt::class -> TypeInt(0, 0)
-                    TypeChar::class -> TypeChar(0, Char(0))
-                    TypeDate::class -> TypeDate(0, Date(0L))
-                    TypeDateInvl::class -> TypeDateInvl(0, Date(0L), Date(0L))
-                    TypeString::class -> TypeString(0, "")
-                    TypeDouble::class -> TypeDouble(0, 0.0)
+                    TypeInt::class -> TypeInt("", 0)
+                    TypeChar::class -> TypeChar("", Char(0))
+                    TypeDate::class -> TypeDate("", Date(0L))
+                    TypeDateInvl::class -> TypeDateInvl("", Date(0L), Date(0L))
+                    TypeString::class -> TypeString("", "")
+                    TypeDouble::class -> TypeDouble("", 0.0)
                     else -> error("invalid type class")
                 }
             )
 
-        fun create(id: Int, name: String, typeName: String): Attribute {
+        fun create(id: String, name: String, typeName: String): Attribute {
             val classes = Type.getSubclasses()
             for (type in classes) {
                 if (typeName == type.name) {

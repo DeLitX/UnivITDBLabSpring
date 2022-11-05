@@ -14,13 +14,13 @@ class TableService {
 
     fun getAll(): List<Table> = repository.findAll().map { it.toModel() }
 
-    fun getById(id: Int): Table? = repository.findByIdOrNull(id)?.toModel()
+    fun getById(id: String): Table? = repository.findByIdOrNull(id)?.toModel()
 
     fun update(table: Table) {
         repository.save(table.toEntity())
     }
 
-    fun deleteById(id: Int) {
+    fun deleteById(id: String) {
         repository.deleteById(id)
     }
 }

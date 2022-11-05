@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class DatabaseDto(
     @field:JsonProperty("id")
-    val id: Int,
+    val id: String,
     @field:JsonProperty("tables")
     val tables: List<TableDto>,
 ) {

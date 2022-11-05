@@ -14,13 +14,13 @@ class RowService {
 
     fun getAll(): List<Row> = repository.findAll().map { it.toModel() }
 
-    fun getById(id: Int): Row? = repository.findByIdOrNull(id)?.toModel()
+    fun getById(id: String): Row? = repository.findByIdOrNull(id)?.toModel()
 
     fun update(row: Row) {
         repository.save(row.toEntity())
     }
 
-    fun deleteById(id: Int) {
+    fun deleteById(id: String) {
         repository.deleteById(id)
     }
 }

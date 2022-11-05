@@ -2,24 +2,21 @@ package com.delitx.it_db_spring_postgress.entity
 
 import com.delitx.it_db_spring_postgress.Date
 import com.delitx.it_db_spring_postgress.db.type.*
-import javax.persistence.Entity
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
-import javax.persistence.Id
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-@javax.persistence.Table(name = "types")
+@Document("types")
 data class TypeEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
+    val id: String?,
     val name: String,
-    val dbValue: String
+    val dbValue: String,
 ) {
-    constructor() : this(0, "", "")
+    constructor() : this(null, "", "")
 
     fun toModel(): Type {
         val classes = Type.getSubclasses()
+        id!!
         for (type in classes) {
             if (type.name == name) {
                 return when (type) {
@@ -36,4 +33,4 @@ data class TypeEntity(
     }
 }
 
-fun Type.toEntity(): TypeEntity = TypeEntity(id, name, toString())
+fun Type.toEntity(): TypeEntity = TypeEntity(id.ifEmpty { null }, name, toString())

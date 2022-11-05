@@ -1,28 +1,21 @@
 package com.delitx.it_db_spring_postgress.entity
 
 import com.delitx.it_db_spring_postgress.db.database.Database
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-@Table(name = "databases")
+@Document("databases")
 class DatabaseEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Int,
-
-    @OneToMany(
-        targetEntity = TableEntity::class,
-        cascade = [CascadeType.ALL],
-        fetch = FetchType.LAZY
-    )
-    val tables: MutableList<TableEntity>,
+    var id: String?,
+    var tables: MutableList<TableEntity>,
 ) {
-    constructor() : this(0, mutableListOf())
+    constructor() : this(null, mutableListOf())
 
-    fun toModel(): Database = Database.create(id, tables.map { it.toModel() })
+    fun toModel(): Database = Database.create(id!!, tables.map { it.toModel() })
 }
 
 fun Database.toEntity(): DatabaseEntity = DatabaseEntity(
-    id,
+    id.ifEmpty { null },
     tables.map { it.toEntity() }.toMutableList()
 )

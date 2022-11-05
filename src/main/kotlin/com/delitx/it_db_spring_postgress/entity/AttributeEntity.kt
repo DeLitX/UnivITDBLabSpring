@@ -1,20 +1,19 @@
 package com.delitx.it_db_spring_postgress.entity
 
 import com.delitx.it_db_spring_postgress.db.table.Attribute
-import javax.persistence.*
+import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.mapping.Document
 
-@Entity
-@Table(name = "attributes")
+@Document("attributes")
 class AttributeEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int,
+    var id: String?,
     var name: String,
-    var typeName: String
+    var typeName: String,
 ) {
-    constructor() : this(0, "", "")
+    constructor() : this(null, "", "")
 
-    fun toModel(): Attribute = Attribute.create(id, name, typeName)
+    fun toModel(): Attribute = Attribute.create(id!!, name, typeName)
 }
 
-fun Attribute.toEntity(): AttributeEntity = AttributeEntity(id, name, type.name)
+fun Attribute.toEntity(): AttributeEntity = AttributeEntity(id.ifEmpty { null }, name, type.name)

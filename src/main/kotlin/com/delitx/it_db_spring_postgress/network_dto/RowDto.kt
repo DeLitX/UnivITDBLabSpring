@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class RowDto(
     @field:JsonProperty("id")
-    val id: Int,
+    val id: String,
     @field:JsonProperty("values")
     val values: List<TypeDto>,
 ) {

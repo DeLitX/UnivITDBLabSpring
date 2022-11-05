@@ -3,7 +3,7 @@ package com.delitx.it_db_spring_postgress.db.table
 import com.delitx.it_db_spring_postgress.db.row.Row
 
 data class TableImpl(
-    override val id: Int,
+    override val id: String,
     override val name: String,
     override val attributes: List<Attribute>,
     override val rows: List<Row>

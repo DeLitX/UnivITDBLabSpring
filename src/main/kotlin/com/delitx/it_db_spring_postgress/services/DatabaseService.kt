@@ -11,22 +11,24 @@ import org.springframework.stereotype.Service
 class DatabaseService {
     @Autowired
     private lateinit var repository: DatabaseRepository
+    @Autowired
+    private lateinit var idGenerator: IdGenerationService
 
     fun getAll(): List<Database> = repository.findAll().map { it.toModel() }
 
-    fun getById(id: Int): Database? = repository.findByIdOrNull(id)?.toModel()
+    fun getById(id: String): Database? = repository.findByIdOrNull(id)?.toModel()
 
-    fun create(): Int {
-        val dbEntity = Database.create(0, emptyList()).toEntity()
+    fun create(): String {
+        val dbEntity = Database.create(idGenerator.newId(), emptyList()).toEntity()
         val saved = repository.save(dbEntity)
-        return saved.id
+        return saved.id!!
     }
 
     fun update(database: Database) {
         repository.save(database.toEntity())
     }
 
-    fun deleteById(id: Int) {
+    fun deleteById(id: String) {
         repository.deleteById(id)
     }
 }

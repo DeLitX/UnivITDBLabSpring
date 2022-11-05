@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 data class AttributeDto(
     @field:JsonProperty("id")
-    val id: Int,
+    val id: String,
     @field:JsonProperty("name")
     val name: String,
     @field:JsonProperty("typeName")

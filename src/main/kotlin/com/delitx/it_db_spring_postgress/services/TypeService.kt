@@ -14,13 +14,13 @@ class TypeService {
 
     fun getAll(): List<Type> = repository.findAll().map { it.toModel() }
 
-    fun getById(id: Int): Type? = repository.findByIdOrNull(id)?.toModel()
+    fun getById(id: String): Type? = repository.findByIdOrNull(id)?.toModel()
 
     fun update(type: Type) {
         repository.save(type.toEntity())
     }
 
-    fun deleteById(id: Int) {
+    fun deleteById(id: String) {
         repository.deleteById(id)
     }
 }

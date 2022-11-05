@@ -1,6 +1,6 @@
 package com.delitx.it_db_spring_postgress.db.type
 
-data class TypeInt(override val id: Int, val value: Int) : Type {
+data class TypeInt(override val id: String, val value: Int) : Type {
     override val name: String
         get() = "Int"
 
