@@ -25,6 +25,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springdoc:springdoc-openapi-ui:1.6.4")
     implementation("org.postgresql:postgresql")
     implementation("com.google.code.gson:gson:2.8.5")
 }
