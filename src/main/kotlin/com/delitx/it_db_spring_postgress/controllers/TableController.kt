@@ -17,7 +17,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/tables")
+@RequestMapping("/database")
 class TableController {
 
     @Autowired
@@ -26,14 +26,14 @@ class TableController {
     @Autowired
     private lateinit var databaseService: DatabaseService
 
-    @GetMapping("/{id}")
-    fun getById(@PathVariable id: Int): ResponseEntity<TableDto?> {
+    @GetMapping("/{databaseId}/table/{id}")
+    fun getById(@PathVariable databaseId: Int, @PathVariable id: Int): ResponseEntity<TableDto?> {
         return ResponseEntity.ok(service.getById(id)?.toDto())
     }
 
-    @RequestMapping(value = ["/add_row"], method = [RequestMethod.POST])
-    fun addTable(@RequestBody addTable: AddRowDto): ResponseEntity<String> {
-        val table = service.getById(addTable.tableId)
+    @RequestMapping(value = ["/{databaseId}/table/{id}/row"], method = [RequestMethod.POST])
+    fun addTable(@PathVariable id: Int, @RequestBody addTable: AddRowDto): ResponseEntity<String> {
+        val table = service.getById(id)
             ?: return ResponseEntity.badRequest().body("Table not available")
         return try {
             val rowValues = addTable.values
@@ -55,9 +55,9 @@ class TableController {
         }
     }
 
-    @RequestMapping(value = ["/merge"], method = [RequestMethod.POST])
-    fun merge(@RequestBody mergeTables: MergeTablesDto): ResponseEntity<String> {
-        val database = databaseService.getById(mergeTables.databaseId)
+    @RequestMapping(value = ["/{databaseId}/merge"], method = [RequestMethod.POST])
+    fun merge(@PathVariable databaseId: Int, @RequestBody mergeTables: MergeTablesDto): ResponseEntity<String> {
+        val database = databaseService.getById(databaseId)
             ?: return ResponseEntity.badRequest().body("Database not available")
         val table1 = database.tables.find { it.id == mergeTables.firstTableId }
             ?: return ResponseEntity.badRequest().body("First table not available")
@@ -92,21 +92,23 @@ class TableController {
         }
     }
 
-    @RequestMapping(value = ["/delete_row"], method = [RequestMethod.DELETE])
-    fun deleteRow(@RequestBody deleteRowDto: DeleteRowDto): ResponseEntity<String> {
-        val database = databaseService.getById(deleteRowDto.databaseId)
+    @RequestMapping(value = ["/{databaseId}/table/{tableId}/row/{rowId}"], method = [RequestMethod.DELETE])
+    fun deleteRow(
+        @PathVariable databaseId: Int,
+        @PathVariable tableId: Int,
+        @PathVariable rowId: Int,
+    ): ResponseEntity<String> {
+        val database = databaseService.getById(databaseId)
             ?: return ResponseEntity.badRequest().body("Database not found")
-        val table = database.tables.find { it.id == deleteRowDto.tableId }
+        val table = database.tables.find { it.id == tableId }
             ?: return ResponseEntity.badRequest().body("Table not found")
         val newTable =
-            Table.create(table.id, table.name, table.attributes, table.rows.filter { it.id != deleteRowDto.rowId })
+            Table.create(table.id, table.name, table.attributes, table.rows.filter { it.id != rowId })
         service.update(newTable)
         return ResponseEntity.ok("Success")
     }
 
     class MergeTablesDto(
-        @field:JsonProperty("databaseId")
-        val databaseId: Int,
         @field:JsonProperty("firstTableId")
         val firstTableId: Int,
         @field:JsonProperty("secondTableId")
@@ -122,18 +124,7 @@ class TableController {
     )
 
     class AddRowDto(
-        @field:JsonProperty("tableId")
-        val tableId: Int,
         @field:JsonProperty("values")
         val values: List<String>,
-    )
-
-    class DeleteRowDto(
-        @field:JsonProperty("databaseId")
-        val databaseId: Int,
-        @field:JsonProperty("tableId")
-        val tableId: Int,
-        @field:JsonProperty("rowId")
-        val rowId: Int,
     )
 }

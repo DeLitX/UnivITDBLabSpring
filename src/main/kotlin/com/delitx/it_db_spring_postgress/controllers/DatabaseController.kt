@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/databases")
+@RequestMapping("/database")
 class DatabaseController {
 
     @Autowired
@@ -34,9 +34,9 @@ class DatabaseController {
         return ResponseEntity.ok(service.getById(id)?.toDto())
     }
 
-    @RequestMapping(value = ["/add_table"], method = [RequestMethod.POST])
-    fun addTable(@RequestBody addTable: AddTableDto): ResponseEntity<String> {
-        val database = service.getById(addTable.databaseId)
+    @RequestMapping(value = ["/{id}/table"], method = [RequestMethod.POST])
+    fun addTable(@PathVariable id: Int, @RequestBody addTable: AddTableDto): ResponseEntity<String> {
+        val database = service.getById(id)
             ?: return ResponseEntity.badRequest().body("Database not available")
         return try {
             val table = addTable.tableModel()
@@ -48,12 +48,12 @@ class DatabaseController {
         }
     }
 
-    @RequestMapping(value = ["/delete_table"], method = [RequestMethod.DELETE])
-    fun deleteTable(@RequestBody deleteTable: DeleteTableDto): ResponseEntity<String> {
-        val database = service.getById(deleteTable.databaseId)
+    @RequestMapping(value = ["/{id}/table/{tableId}"], method = [RequestMethod.DELETE])
+    fun deleteTable(@PathVariable id: Int, @PathVariable tableId: Int): ResponseEntity<String> {
+        val database = service.getById(id)
             ?: return ResponseEntity.badRequest().body("Database not available")
         return try {
-            val tableId = deleteTable.tableId
+            val tableId = tableId
             val newDatabase = Database.create(database.id, database.tables.filter { it.id != tableId })
             service.update(newDatabase)
             ResponseEntity.ok("Deleted")
@@ -62,22 +62,13 @@ class DatabaseController {
         }
     }
 
-    @RequestMapping(value = ["/delete"], method = [RequestMethod.DELETE])
-    fun delete(@RequestBody id: Int): ResponseEntity<String> {
+    @RequestMapping(value = ["/{id}"], method = [RequestMethod.DELETE])
+    fun delete(@PathVariable id: Int): ResponseEntity<String> {
         service.deleteById(id)
         return ResponseEntity.ok("Deleted")
     }
 
-    class DeleteTableDto(
-        @field:JsonProperty("databaseId")
-        val databaseId: Int,
-        @field:JsonProperty("tableId")
-        val tableId: Int,
-    )
-
     class AddTableDto(
-        @field:JsonProperty("databaseId")
-        val databaseId: Int,
         @field:JsonProperty("name")
         val name: String,
         @field:JsonProperty("attributes")
